@@ -3,7 +3,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Package, ShoppingCart, CalendarDays,
-  Users, BarChart2, Settings, Menu, Sun, Moon, Flower2,
+  Users, BarChart2, Settings, Sun, Moon, Flower2, PanelLeftOpen, PanelLeftClose,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -32,9 +32,9 @@ function NavItem({ item, isExpanded }) {
       to={item.href}
       end={item.end}
       className={({ isActive }) => [
-        "group flex items-center rounded-xl transition-all duration-200 ease-out",
+        "group relative flex items-center rounded-xl transition-all duration-200 ease-out",
         "outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-        isExpanded ? "gap-3 px-3 py-2.5" : "py-2.5",
+        isExpanded ? "gap-3 px-3 py-2.5" : "justify-center py-2.5 w-full",
         isActive
           ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
           : "text-sidebar-foreground/60 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground",
@@ -42,13 +42,13 @@ function NavItem({ item, isExpanded }) {
     >
       {({ isActive }) => (
         <>
-          <div className={["relative shrink-0 flex items-center justify-center", isExpanded ? "" : "w-full"].join(" ")}>
-            <Icon size={18} strokeWidth={isActive ? 2 : 1.5} className="transition-transform duration-200 group-hover:scale-110" />
-            {!isExpanded && <Tooltip label={item.label} />}
-          </div>
-          <span className={["text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-300", isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"].join(" ")}>
-            {item.label}
-          </span>
+          <Icon size={18} strokeWidth={isActive ? 2 : 1.5} className="shrink-0 transition-transform duration-200 group-hover:scale-110" />
+          {!isExpanded && <Tooltip label={item.label} />}
+          {isExpanded && (
+            <span className="text-sm font-medium whitespace-nowrap overflow-hidden">
+              {item.label}
+            </span>
+          )}
         </>
       )}
     </NavLink>
@@ -59,58 +59,69 @@ function ThemeToggle({ isExpanded, theme, toggleTheme }) {
   return (
     <button
       onClick={toggleTheme}
-      className={["group flex items-center rounded-xl w-full transition-all duration-200 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/40", isExpanded ? "gap-3 px-3 py-2.5" : "py-2.5"].join(" ")}
+      className={[
+        "group relative flex items-center rounded-xl w-full transition-all duration-200",
+        "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/40",
+        isExpanded ? "gap-3 px-3 py-2.5" : "justify-center py-2.5",
+      ].join(" ")}
       aria-label="Toggle theme"
     >
-      <div className={["relative shrink-0 flex items-center justify-center", isExpanded ? "" : "w-full"].join(" ")}>
-        <div className="relative w-[18px] h-[18px]">
-          <Sun  size={18} strokeWidth={1.5} className={["absolute inset-0 transition-all duration-300", theme === "dark"  ? "opacity-100 rotate-0 scale-100" : "opacity-0 rotate-90 scale-50"].join(" ")} />
-          <Moon size={18} strokeWidth={1.5} className={["absolute inset-0 transition-all duration-300", theme === "light" ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"].join(" ")} />
-        </div>
-        {!isExpanded && <Tooltip label={theme === "dark" ? "Light Mode" : "Dark Mode"} />}
+      <div className="relative w-[18px] h-[18px] shrink-0">
+        <Sun  size={18} strokeWidth={1.5} className={["absolute inset-0 transition-all duration-300", theme === "dark"  ? "opacity-100 rotate-0 scale-100" : "opacity-0 rotate-90 scale-50"].join(" ")} />
+        <Moon size={18} strokeWidth={1.5} className={["absolute inset-0 transition-all duration-300", theme === "light" ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"].join(" ")} />
       </div>
-      <span className={["text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-300", isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"].join(" ")}>
-        {theme === "dark" ? "Light Mode" : "Dark Mode"}
-      </span>
+      {!isExpanded && <Tooltip label={theme === "dark" ? "Light Mode" : "Dark Mode"} />}
+      {isExpanded && (
+        <span className="text-sm font-medium whitespace-nowrap overflow-hidden">
+          {theme === "dark" ? "Light Mode" : "Dark Mode"}
+        </span>
+      )}
     </button>
   );
 }
 
 function UserAvatar({ isExpanded }) {
   return (
-    <div className={["group flex items-center rounded-xl cursor-pointer hover:bg-sidebar-accent/40 transition-all duration-200", isExpanded ? "gap-3 px-3 py-2 w-full" : "py-2"].join(" ")}>
-      <div className={["relative shrink-0 flex items-center justify-center", isExpanded ? "" : "w-full"].join(" ")}>
-        <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center shadow-sm ring-2 ring-sidebar-primary/30">
-          <span className="text-[12px] font-bold text-sidebar-primary-foreground select-none">A</span>
+    <div className={[
+      "group relative flex items-center rounded-xl cursor-pointer hover:bg-sidebar-accent/40 transition-all duration-200",
+      isExpanded ? "gap-3 px-3 py-2 w-full" : "justify-center py-2",
+    ].join(" ")}>
+      <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center shadow-sm ring-2 ring-sidebar-primary/30 shrink-0">
+        <span className="text-[12px] font-bold text-sidebar-primary-foreground select-none">A</span>
+      </div>
+      {!isExpanded && <Tooltip label="Admin" />}
+      {isExpanded && (
+        <div className="overflow-hidden">
+          <p className="text-[13px] font-semibold text-sidebar-foreground whitespace-nowrap leading-tight">Admin</p>
+          <p className="text-[11px] text-sidebar-foreground/50 whitespace-nowrap">Administrator</p>
         </div>
-        {!isExpanded && <Tooltip label="Admin" />}
-      </div>
-      <div className={["overflow-hidden transition-all duration-300", isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"].join(" ")}>
-        <p className="text-[13px] font-semibold text-sidebar-foreground whitespace-nowrap leading-tight">Admin</p>
-        <p className="text-[11px] text-sidebar-foreground/50 whitespace-nowrap">Administrator</p>
-      </div>
+      )}
     </div>
   );
 }
 
-function SidebarPanel({ isExpanded, onToggle, theme, toggleTheme }) {
+function SidebarPanel({ isExpanded, theme, toggleTheme }) {
   return (
-    <div className={["flex flex-col h-full bg-sidebar border-r border-sidebar-border overflow-visible transition-all duration-300 ease-out", isExpanded ? "w-[220px] px-3" : "w-[64px] px-2"].join(" ")}>
-
-      {/* Header */}
-      <div className={["flex items-center py-4 transition-all duration-300", isExpanded ? "justify-between" : "justify-center"].join(" ")}>
-        <div className={["flex items-center gap-2 overflow-hidden transition-all duration-300", isExpanded ? "w-auto opacity-100" : "w-0 opacity-0 pointer-events-none"].join(" ")}>
-          <div className="w-6 h-6 rounded-md bg-sidebar-primary flex items-center justify-center">
-            <Flower2 size={13} color="#fff" strokeWidth={1.5} />
-          </div>
-          <span className="text-[13px] font-semibold text-sidebar-foreground tracking-tight whitespace-nowrap">Blossom</span>
+    <div
+      className={[
+        "flex flex-col h-full transition-all duration-300 ease-out bg-sidebar",
+        isExpanded ? "w-[220px] px-3" : "w-[64px] px-2.5",
+      ].join(" ")}
+      style={{ overflow: "visible" }}
+    >
+      {/* Brand header */}
+      <div className={[
+        "flex items-center gap-2 py-4",
+        isExpanded ? "px-1" : "justify-center",
+      ].join(" ")}>
+        <div className="flex items-center justify-center shrink-0">
+          <Flower2 size={20} className="text-sidebar-primary" strokeWidth={2} />
         </div>
-        <button
-          onClick={onToggle}
-          className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 transition-all duration-200"
-        >
-          <Menu size={18} strokeWidth={2} />
-        </button>
+        {isExpanded && (
+          <span className="text-[13px] font-semibold text-sidebar-foreground tracking-tight whitespace-nowrap">
+            Blossom
+          </span>
+        )}
       </div>
 
       {/* Nav */}
@@ -138,24 +149,63 @@ export default function AdminSidebar() {
   return (
     <>
       {/* Desktop */}
-      <aside className="hidden lg:flex h-screen sticky top-0 shrink-0" style={{ overflow: "visible" }}>
-        <SidebarPanel isExpanded={isExpanded} onToggle={() => setIsExpanded((v) => !v)} theme={theme} toggleTheme={toggleTheme} />
+      <aside
+        className="hidden lg:flex h-screen sticky top-0 shrink-0"
+        style={{ overflow: "visible" }}
+      >
+        <SidebarPanel isExpanded={isExpanded} theme={theme} toggleTheme={toggleTheme} />
+
+        {/* Divider + toggle button */}
+        <div className="relative self-stretch">
+          <div className="w-px h-full bg-sidebar-border" />
+
+          {/* No bg, no border — just the icon, top-aligned, pushed further right */}
+          <button
+            onClick={() => setIsExpanded((v) => !v)}
+            aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
+            className="absolute top-[14px] left-[14px] z-50
+              flex items-center justify-center
+              text-muted-foreground/50 hover:text-foreground
+              transition-all duration-200 hover:scale-110"
+          >
+            {isExpanded
+              ? <PanelLeftClose size={30} strokeWidth={1.5} />
+              : <PanelLeftOpen  size={30} strokeWidth={1.5} />
+            }
+          </button>
+        </div>
       </aside>
 
       {/* Mobile hamburger */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="fixed top-4 left-4 z-50 lg:hidden w-9 h-9 rounded-xl flex items-center justify-center bg-sidebar border border-sidebar-border shadow-md text-sidebar-foreground hover:bg-sidebar-accent/40 transition-all duration-200"
+        className="fixed top-4 left-4 z-50 lg:hidden text-muted-foreground hover:text-foreground transition-all duration-200"
+        aria-label="Open menu"
       >
-        <Menu size={18} strokeWidth={2} />
+        <PanelLeftOpen size={30} strokeWidth={1.5} />
       </button>
 
       {/* Mobile drawer */}
       {isMobileOpen && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden animate-in fade-in duration-200" onClick={() => setIsMobileOpen(false)} />
-          <aside className="fixed left-0 top-0 z-50 h-full lg:hidden animate-in slide-in-from-left duration-300">
-            <SidebarPanel isExpanded={true} onToggle={() => setIsMobileOpen(false)} theme={theme} toggleTheme={toggleTheme} />
+          <div
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden animate-in fade-in duration-200"
+            onClick={() => setIsMobileOpen(false)}
+          />
+          <aside className="fixed left-0 top-0 z-50 h-full lg:hidden animate-in slide-in-from-left duration-300 flex">
+            <SidebarPanel isExpanded={true} theme={theme} toggleTheme={toggleTheme} />
+            <div className="relative self-stretch">
+              <div className="w-px h-full bg-sidebar-border" />
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                className="absolute top-[14px] left-[14px] z-50
+                  flex items-center justify-center
+                  text-muted-foreground/50 hover:text-foreground
+                  transition-all duration-200 hover:scale-110"
+              >
+                <PanelLeftClose size={30} strokeWidth={1.5} />
+              </button>
+            </div>
           </aside>
         </>
       )}
