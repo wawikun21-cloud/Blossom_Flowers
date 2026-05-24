@@ -7,6 +7,7 @@ import AdminLayout from "@/layouts/admin/AdminLayout";
 const DashboardPage = lazy(() => import("@/features/admin/pages/DashboardPage"));
 const OrdersListPage = lazy(() => import("@/features/admin/pages/OrdersListPage"));
 const OrderDetailsPage = lazy(() => import("@/features/admin/pages/OrderDetailsPage"));
+const ReportsPage = lazy(() => import("@/features/admin/pages/ReportsPage"));
 
 function App() {
   return (
@@ -35,7 +36,11 @@ function App() {
             } />
             <Route path="bookings" element={null} />
             <Route path="customers" element={null} />
-            <Route path="reports" element={null} />
+            <Route path="reports" element={
+                <Suspense fallback={null}>
+                  <ReportsPage />
+                </Suspense>
+            } />
             <Route path="settings" element={null} />
           </Route>
           <Route path="*" element={<Navigate to="/admin" replace />} />

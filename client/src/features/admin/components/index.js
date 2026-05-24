@@ -6,3 +6,8 @@ export { RecentOrders }      from "./RecentOrders";
 export { UpcomingBookings }  from "./UpcomingBookings";
 export { OrderStatusBadge }  from "./OrderStatusBadge";
 export { DashboardHeader }   from "./DashboardHeader";
+export { SalesReports }      from "./Reports/SalesReports";
+export { ProductReports }    from "./Reports/ProductReports";
+export { InventoryReports }  from "./Reports/InventoryReports";
+export { CustomerReports }   from "./Reports/CustomerReports";
+export { ExportMenu }        from "./Reports/ExportMenu";

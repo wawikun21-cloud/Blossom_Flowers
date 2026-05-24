@@ -1,0 +1,1 @@
+import{o as e}from"./index-D1KXLoc4.js";function t(e){return`₱${e.toLocaleString(`en-PH`)}`}var n=e();function r({status:e}){return(0,n.jsx)(`span`,{className:`os-badge os-badge--${e?.toLowerCase().replace(/\s+/g,`-`)??`unknown`}`,children:e})}export{t as n,r as t};
