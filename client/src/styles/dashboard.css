@@ -504,10 +504,85 @@
 }
 .ub-client { font-size: 0.72rem; color: var(--muted-foreground); margin: 0; }
 .ub-time {
-  display: flex;
-  align-items: center;
-  gap: 0.2rem;
-  font-size: 0.72rem;
-  color: var(--muted-foreground);
-  flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.72rem;
+    color: var(--muted-foreground);
+    flex-shrink: 0;
 }
+
+/* â”€â”€ Booking Status Badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.bs-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: calc(var(--radius) * 0.55);
+    border: 1px solid transparent;
+    white-space: nowrap;
+    text-transform: capitalize;
+}
+
+/* Each status uses colour-mix against your existing palette vars â€” no raw hex */
+.bs-badge--pending {
+    background: color-mix(in srgb, var(--secondary) 60%, transparent);
+    color: color-mix(in srgb, var(--primary) 80%, var(--foreground));
+    border-color: color-mix(in srgb, var(--primary) 25%, transparent);
+}
+.bs-badge--confirmed {
+    background: color-mix(in srgb, var(--success) 20%, transparent);
+    color: color-mix(in srgb, var(--success) 70%, var(--foreground));
+    border-color: color-mix(in srgb, var(--success) 40%, transparent);
+}
+.bs-badge--in_progress {
+    background: color-mix(in srgb, var(--warning) 20%, transparent);
+    color: color-mix(in srgb, var(--warning) 70%, var(--foreground));
+    border-color: color-mix(in srgb, var(--warning) 40%, transparent);
+}
+.bs-badge--completed {
+    background: color-mix(in srgb, var(--success) 20%, transparent);
+    color: color-mix(in srgb, var(--success) 70%, var(--foreground));
+    border-color: color-mix(in srgb, var(--success) 40%, transparent);
+}
+.bs-badge--cancelled {
+    background: color-mix(in srgb, var(--destructive) 12%, transparent);
+    color: var(--destructive);
+    border-color: color-mix(in srgb, var(--destructive) 30%, transparent);
+}
+
+/* â”€â”€ Booking Table Base Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.bt-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.bt-th {
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    padding: 0 0.5rem 0.5rem;
+    white-space: nowrap;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+}
+.bt-th--center { text-align: center; }
+.bt-th--right { text-align: right; }
+.bt-tr {
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+    transition: background 0.12s;
+    cursor: pointer;
+}
+.bt-tr:last-child { border-bottom: none; }
+.bt-tr:hover { background: color-mix(in srgb, var(--muted) 50%, transparent); }
+.bt-td {
+    padding: 0.65rem 0.5rem;
+    vertical-align: middle;
+    color: var(--card-foreground);
+}
+.bt-td--mono { font-family: var(--mono); font-size: 0.7rem; color: var(--muted-foreground); }
+.bt-td--name { font-weight: 600; }
+.bt-td--right { text-align: right; }
+.bt-td--bold { font-weight: 700; }
+.bt-td--muted { color: var(--muted-foreground); font-size: 0.72rem; }
+.bt-td--center { text-align: center; }
