@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import AdminLayout from "@/layouts/admin/AdminLayout";
 
 const DashboardPage = lazy(() => import("@/features/admin/pages/DashboardPage"));
+const OrdersListPage = lazy(() => import("@/features/admin/pages/OrdersListPage"));
+const OrderDetailsPage = lazy(() => import("@/features/admin/pages/OrderDetailsPage"));
 
 function App() {
   return (
@@ -21,7 +23,16 @@ function App() {
               }
             />
             <Route path="products" element={null} />
-            <Route path="orders" element={null} />
+            <Route path="orders" element={
+              <Suspense fallback={null}>
+                <OrdersListPage />
+              </Suspense>
+            } />
+            <Route path="orders/:orderId" element={
+              <Suspense fallback={null}>
+                <OrderDetailsPage />
+              </Suspense>
+            } />
             <Route path="bookings" element={null} />
             <Route path="customers" element={null} />
             <Route path="reports" element={null} />
