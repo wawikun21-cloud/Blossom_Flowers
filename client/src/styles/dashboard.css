@@ -1,0 +1,513 @@
+﻿/* ==========================================================================
+   dashboard.css
+   All dashboard styles. Uses ONLY CSS variables from index.css.
+   No hardcoded colours â€” every rule responds automatically to
+   both the .dark class toggle and prefers-color-scheme media query.
+   ========================================================================== */
+
+/* â”€â”€ Page shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.db-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--serif);
+}
+
+/* â”€â”€ Bento grid (12-col) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.75rem;
+}
+
+.bento__stat     { grid-column: span 3; }   /* 4 KPI cards   */
+.bento__sales    { grid-column: span 8; }   /* Sales chart   */
+.bento__donut    { grid-column: span 4; }   /* Donut chart   */
+.bento__bouquets { grid-column: span 3; }
+.bento__orders   { grid-column: span 5; }
+.bento__bookings { grid-column: span 4; }
+
+@media (max-width: 1280px) {
+  .bento__stat     { grid-column: span 6; }
+  .bento__sales    { grid-column: span 12; }
+  .bento__donut    { grid-column: span 12; }
+  .bento__bouquets { grid-column: span 12; }
+  .bento__orders   { grid-column: span 12; }
+  .bento__bookings { grid-column: span 12; }
+}
+
+@media (max-width: 640px) {
+  .db-page { padding: 1rem; gap: 0.875rem; }
+  .bento   { gap: 0.625rem; }
+  .bento__stat { grid-column: span 12; }
+}
+
+/* â”€â”€ Shared card base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.stat-card,
+.sc-card,
+.oc-card,
+.ro-card,
+.tb-card,
+.ub-card {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  border-radius: var(--radius);
+  padding: 1.125rem;
+  height: 100%;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease;
+}
+
+.stat-card:hover,
+.sc-card:hover,
+.oc-card:hover,
+.ro-card:hover,
+.tb-card:hover,
+.ub-card:hover {
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
+/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.db-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.db-header__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 0.2rem;
+  letter-spacing: -0.025em;
+}
+.db-header__sub {
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+.db-header__name { color: var(--primary); font-weight: 600; }
+.db-header__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+.db-header__btn:hover {
+  background: var(--muted);
+  border-color: var(--primary);
+  color: var(--foreground);
+}
+
+/* â”€â”€ Shared ghost / outline buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.db-ghost-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.5rem;
+  border-radius: calc(var(--radius) * 0.6);
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, background 0.15s;
+}
+.db-ghost-btn:hover { color: var(--foreground); background: var(--muted); }
+
+.db-outline-btn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.45rem;
+  border-radius: calc(var(--radius) * 0.8);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.db-outline-btn:hover { background: var(--muted); border-color: var(--primary); }
+
+/* â”€â”€ StatCard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.stat-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.stat-card__label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+.stat-card__icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: calc(var(--radius) * 0.65);
+  background: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+}
+.stat-card__value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.stat-card__foot {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.stat-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.45rem;
+  border-radius: calc(var(--radius) * 0.5);
+}
+/* Success uses --success var; fall back to secondary for tonal harmony */
+.stat-card__badge--up {
+  background: color-mix(in srgb, var(--success) 18%, transparent);
+  color: color-mix(in srgb, var(--success) 80%, var(--foreground));
+}
+.stat-card__badge--down {
+  background: color-mix(in srgb, var(--destructive) 12%, transparent);
+  color: var(--destructive);
+}
+.stat-card__period {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+}
+
+/* â”€â”€ SalesOverviewChart â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.sc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.sc-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.sc-card__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 0.15rem;
+}
+.sc-card__sub {
+  font-size: 0.72rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+.sc-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  background: var(--muted);
+  border-radius: calc(var(--radius) * 0.75);
+  padding: 0.2rem;
+  flex-shrink: 0;
+}
+.sc-tab {
+  padding: 0.25rem 0.6rem;
+  border-radius: calc(var(--radius) * 0.55);
+  border: none;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.sc-tab--on {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+.sc-tab:hover:not(.sc-tab--on) { color: var(--foreground); }
+
+/* Chart tooltip */
+.sc-tip {
+  background: var(--popover);
+  border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+.sc-tip__label { font-size: 0.72rem; color: var(--muted-foreground); margin: 0 0 0.15rem; }
+.sc-tip__val   { font-size: 0.875rem; font-weight: 700; color: var(--foreground); margin: 0; }
+
+/* â”€â”€ OrderStatusChart â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.oc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.oc-card__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+.oc-legend { display: flex; flex-direction: column; gap: 0.45rem; }
+.oc-legend__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.oc-legend__left { display: flex; align-items: center; gap: 0.5rem; }
+.oc-legend__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.oc-legend__label { font-size: 0.75rem; color: var(--muted-foreground); }
+.oc-legend__count { font-size: 0.75rem; font-weight: 600; color: var(--foreground); }
+.oc-legend__pct   { font-weight: 400; color: var(--muted-foreground); }
+
+/* â”€â”€ OrderStatusBadge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.os-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: calc(var(--radius) * 0.55);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+/* Each status uses colour-mix against your existing palette vars â€” no raw hex */
+.os-badge--pending {
+  background: color-mix(in srgb, var(--secondary) 60%, transparent);
+  color: color-mix(in srgb, var(--primary) 80%, var(--foreground));
+  border-color: color-mix(in srgb, var(--primary) 25%, transparent);
+}
+.os-badge--preparing {
+  background: color-mix(in srgb, var(--ring) 20%, transparent);
+  color: color-mix(in srgb, var(--ring) 80%, var(--foreground));
+  border-color: color-mix(in srgb, var(--ring) 40%, transparent);
+}
+.os-badge--out-for-delivery {
+  background: color-mix(in srgb, var(--sidebar-accent) 30%, transparent);
+  color: color-mix(in srgb, var(--sidebar-accent) 70%, var(--foreground));
+  border-color: color-mix(in srgb, var(--sidebar-accent) 50%, transparent);
+}
+.os-badge--completed {
+  background: color-mix(in srgb, var(--success) 20%, transparent);
+  color: color-mix(in srgb, var(--success) 70%, var(--foreground));
+  border-color: color-mix(in srgb, var(--success) 40%, transparent);
+}
+.os-badge--cancelled {
+  background: color-mix(in srgb, var(--destructive) 12%, transparent);
+  color: var(--destructive);
+  border-color: color-mix(in srgb, var(--destructive) 30%, transparent);
+}
+
+/* â”€â”€ RecentOrders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.ro-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.ro-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.625rem;
+}
+.ro-card__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+.ro-table-wrap { overflow-x: auto; flex: 1; }
+.ro-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.ro-th {
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  padding: 0 0.5rem 0.5rem;
+  white-space: nowrap;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+}
+.ro-th--r { text-align: right; }
+.ro-tr {
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  transition: background 0.12s;
+  cursor: pointer;
+}
+.ro-tr:last-child { border-bottom: none; }
+.ro-tr:hover { background: color-mix(in srgb, var(--muted) 50%, transparent); }
+.ro-td { padding: 0.65rem 0.5rem; vertical-align: middle; color: var(--card-foreground); }
+.ro-td--mono  { font-family: var(--mono); font-size: 0.7rem; color: var(--muted-foreground); }
+.ro-td--name  { font-weight: 600; }
+.ro-td--r     { text-align: right; }
+.ro-td--bold  { font-weight: 700; }
+.ro-td--muted { color: var(--muted-foreground); font-size: 0.72rem; }
+.ro-card__foot { margin-top: 0.75rem; border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent); padding-top: 0.75rem; }
+
+/* â”€â”€ TopBouquets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.tb-card {
+  display: flex;
+  flex-direction: column;
+}
+.tb-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.375rem;
+}
+.tb-card__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+.tb-list { display: flex; flex-direction: column; }
+.tb-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+.tb-row:last-child { border-bottom: none; }
+.tb-swatch {
+  width: 2.375rem;
+  height: 2.375rem;
+  border-radius: calc(var(--radius) * 0.7);
+  flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+}
+.tb-info { flex: 1; min-width: 0; }
+.tb-name {
+  font-size: 0.8375rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tb-sold { font-size: 0.72rem; color: var(--muted-foreground); margin: 0; }
+.tb-price { font-size: 0.8375rem; font-weight: 700; color: var(--foreground); flex-shrink: 0; }
+
+/* â”€â”€ UpcomingBookings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.ub-card {
+  display: flex;
+  flex-direction: column;
+}
+.ub-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.375rem;
+}
+.ub-card__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+.ub-list { display: flex; flex-direction: column; }
+.ub-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+.ub-row:last-child { border-bottom: none; }
+.ub-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 2rem;
+  flex-shrink: 0;
+}
+.ub-month {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+.ub-day {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--foreground);
+  line-height: 1.1;
+}
+.ub-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.ub-info { flex: 1; min-width: 0; }
+.ub-event {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0 0 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ub-client { font-size: 0.72rem; color: var(--muted-foreground); margin: 0; }
+.ub-time {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+}

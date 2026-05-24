@@ -29,4 +29,46 @@
 ### Validation performed
 - `cd client && npm run build` ✅ (build succeeded).
 
+---
 
+## 2026-05-24 - Debug: Dashboard CSS Loading Issue
+
+### Root Cause
+The `dashboard.css` file (containing all styling classes for the bento grid layout, cards, and components) was not being imported in `main.jsx`. This caused the interface to render as unformatted plain text because:
+1. Components used CSS classes like `.stat-card`, `.sc-card`, `.oc-card`, etc. defined in `dashboard.css`
+2. These classes were never loaded, so no styles were applied
+3. Tailwind utilities were not being used - the codebase uses CSS classes from the dashboard.css file
+
+### Fix Applied
+- Added `import './styles/dashboard.css'` to `client/src/main.jsx`
+
+### Validation
+- `cd client && npm run build` ✅ (build succeeded, CSS bundle size increased from 57kb to 67kb)
+- `cd client && npx eslint src/features/admin` ✅ (no lint errors)
+
+---
+
+## 2026-05-24 - Refactor DashboardPage to Bento Grid Layout
+
+### What changed
+- **DashboardPage.jsx**: Refactored to Bento grid with 12-col layout (`bento` class), varied column spans for visual interest
+- **StatCard.jsx**: Uses `.stat-card` CSS class with proper structure
+- **SalesOverviewChart.jsx**: Uses `.sc-card` CSS class with tab navigation
+- **OrderStatusChart.jsx**: Uses `.oc-card` CSS class with pie chart and legend
+- **TopBouquets.jsx**: Uses `.tb-card` CSS class with hover states
+- **RecentOrders.jsx**: Uses `.ro-card` CSS class with table
+- **UpcomingBookings.jsx**: Uses `.ub-card` CSS class with booking rows
+
+### Responsive behavior
+- Mobile: Single column stack via `@media (max-width: 640px)` in dashboard.css
+- Tablet: 4-col stat cards via `@media (max-width: 1280px)`
+- Desktop: 12-col bento grid with varied spans (3+8, 4, 5+7)
+
+---
+
+## 2026-05-24 - Dark Theme Fix
+### Issue
+In dark mode, `--card` and `--popover` were set to `#ffffff` (white), creating white cards on dark background.
+
+### Fix Applied
+Updated `--card`, `--card-foreground`, `--popover`, `--popover-foreground`, and `--secondary` variables in `.dark` block to use dark-appropriate colors (`#352a3e` for cards, `#6b506a` for secondary, `#f3f4f6` for foreground text).
