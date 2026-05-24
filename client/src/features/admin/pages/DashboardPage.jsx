@@ -34,7 +34,7 @@ export default function DashboardPage() {
     useDashboard();
 
   return (
-    <div className="db-page">
+    <div className="db-page scrollbar">
       <DashboardHeader adminName="Admin" dateRange={DATE_RANGE} />
 
       {/* ── Bento Grid ─────────────────────────────────────────────── */}

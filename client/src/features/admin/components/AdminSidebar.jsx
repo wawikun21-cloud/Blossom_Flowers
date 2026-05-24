@@ -1,9 +1,10 @@
 // src/features/admin/components/AdminSidebar.jsx
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Package, ShoppingCart, CalendarDays,
   Users, BarChart2, Settings, Sun, Moon, Flower2, PanelLeftOpen, PanelLeftClose,
+  LogOut, ChevronDown,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -81,19 +82,72 @@ function ThemeToggle({ isExpanded, theme, toggleTheme }) {
 }
 
 function UserAvatar({ isExpanded }) {
+  const [showLogout, setShowLogout] = useState(false);
+  const navigate = useNavigate();
+  const containerRef = useRef(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth_token");
+    setShowLogout(false);
+    navigate("/");
+  };
+
+  // Close logout menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setShowLogout(false);
+      }
+    };
+
+    if (showLogout) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showLogout]);
+
   return (
-    <div className={[
-      "group relative flex items-center rounded-xl cursor-pointer hover:bg-sidebar-accent/40 transition-all duration-200",
-      isExpanded ? "gap-3 px-3 py-2 w-full" : "justify-center py-2",
-    ].join(" ")}>
-      <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center shadow-sm ring-2 ring-sidebar-primary/30 shrink-0">
-        <span className="text-[12px] font-bold text-sidebar-primary-foreground select-none">A</span>
+    <div className="relative" ref={containerRef}>
+      <div
+        className={[
+          "group relative flex items-center rounded-xl cursor-pointer hover:bg-sidebar-accent/40 transition-all duration-200",
+          isExpanded ? "gap-3 px-3 py-2 w-full" : "justify-center py-2",
+        ].join(" ")}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowLogout(!showLogout);
+        }}
+      >
+        <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center shadow-sm ring-2 ring-sidebar-primary/30 shrink-0">
+          <span className="text-[12px] font-bold text-sidebar-primary-foreground select-none">A</span>
+        </div>
+        {!isExpanded && <Tooltip label="Admin" />}
+        {isExpanded && (
+          <>
+            <div className="overflow-hidden">
+              <p className="text-[13px] font-semibold text-sidebar-foreground whitespace-nowrap leading-tight">Admin</p>
+              <p className="text-[11px] text-sidebar-foreground/50 whitespace-nowrap">Administrator</p>
+            </div>
+            <ChevronDown size={14} className="ml-auto text-sidebar-foreground/50" />
+          </>
+        )}
       </div>
-      {!isExpanded && <Tooltip label="Admin" />}
-      {isExpanded && (
-        <div className="overflow-hidden">
-          <p className="text-[13px] font-semibold text-sidebar-foreground whitespace-nowrap leading-tight">Admin</p>
-          <p className="text-[11px] text-sidebar-foreground/50 whitespace-nowrap">Administrator</p>
+
+      {/* Logout Submenu - floats outside sidebar to the right with spacing */}
+      {showLogout && (
+        <div className={[
+          "absolute top-0 left-[calc(100%+16px)] bg-card border border-border rounded-lg shadow-lg z-[1000] min-w-[140px]",
+        ].join(" ")}>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-destructive hover:bg-muted transition-colors rounded-lg"
+          >
+            <LogOut size={16} />
+            <span>Logout</span>
+          </button>
         </div>
       )}
     </div>
