@@ -7,3 +7,4 @@ export { UpcomingBookings }  from "./UpcomingBookings";
 export { OrderStatusBadge }  from "./OrderStatusBadge";
 export { DashboardHeader }   from "./DashboardHeader";
 export { CustomersManagement } from "./CustomersManagement";
+export { ProductsManagement } from "./ProductsManagement";

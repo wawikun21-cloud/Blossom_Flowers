@@ -7,6 +7,7 @@ import PublicLayout from "@/layouts/public/PublicLayout";
 
 const DashboardPage = lazy(() => import("@/features/admin/pages/DashboardPage"));
 const CustomersPage = lazy(() => import("@/features/admin/pages/CustomersPage"));
+const ProductsPage = lazy(() => import("@/features/admin/pages/ProductsPage"));
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
 
 function App() {
@@ -30,7 +31,11 @@ function App() {
                 </Suspense>
               }
             />
-            <Route path="products" element={null} />
+            <Route path="products" element={
+              <Suspense fallback={null}>
+                <ProductsPage />
+              </Suspense>
+            } />
             <Route path="orders" element={null} />
             <Route path="bookings" element={null} />
             <Route path="customers" element={
