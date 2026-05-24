@@ -1,59 +1,32 @@
-# Production Readiness Implementation - PRD
+## 2026-05-23 - Fix Vite import resolution for DashboardPage
 
-## Objective
-Transform the server from development-ready to production-ready by implementing proper error handling, security, logging, and reliability features.
+### Plan
+1. Verify where the real `DashboardPage` file lives and what export it provides.
+   - Check `client/src/features/admin/pages/DashboardPage.jsx`.
+   - Confirm whether there is a `client/src/features/admin/pages/dashboard/DashboardPage.(js|jsx|ts|tsx)`.
+2. Fix `client/src/App.jsx` import path to match the actual file.
+3. Run the client build (or dev) to confirm the Vite import-analysis error is gone.
 
-## Implementation Plan
+### Success criteria
+- `npm run build` (in `client/`) completes without the `Failed to resolve import` error.
+- No new TypeScript/lint errors appear (as applicable).
 
-### Immediate Priority
-- [x] Add connection pooling in `db/db.js`
-- [x] Implement graceful shutdown in `server.js`
-- [x] Add 404 handler in `server.js`
-
-### High Priority
-- [x] Install and configure `helmet` for security headers
-- [x] Install and configure `express-rate-limit` for rate limiting
-- [x] Add input validation middleware
-
-### Medium Priority
-- [x] Replace console.log with `winston` logger
-- [x] Install and configure `morgan` for HTTP request logging
-
-### Low Priority
-- [x] Install and configure `compression` middleware
-
-### Validation
-- [x] Server starts without errors (verified with test run)
-- [x] Health check endpoint works
-- [x] 404 handler catches undefined routes
-- [x] Graceful shutdown works on SIGTERM/SIGINT
-- [x] All dependencies installed correctly
+### Notes
+- Prefer correcting the import path over creating a duplicate file, to minimize impact.
 
 ---
 
-## Changes Summary
+## 2026-05-23 - Execution results
+### What changed
+- Fixed broken `DashboardPage` import in `client/src/App.jsx`.
+- Corrected relative imports inside `client/src/features/admin/pages/DashboardPage.jsx`.
+- Fixed relative imports for `formatPeso` in:
+  - `client/src/features/admin/components/RecentOrders.jsx`
+  - `client/src/features/admin/components/TopBouquets.jsx`
+- Added missing UI component stubs under `client/src/components/ui/`:
+  - `card.jsx`, `badge.jsx`, `select.jsx`, `table.jsx`
 
-### `server/db/db.js`
-- Changed from `mysql` to `mysql2/promise` for async/await support
-- Added connection pooling with `createPool()`
-- Added graceful startup validation
-- Replaced `console.log` with winston logger
+### Validation performed
+- `cd client && npm run build` ✅ (build succeeded).
 
-### `server/server.js`
-- Added security middleware: `helmet`, `cors` with configurable origin
-- Added rate limiting with `express-rate-limit`
-- Added HTTP logging with `morgan`
-- Added compression middleware
-- Converted `/users` route to async/await pattern
-- Added 404 handler for undefined routes
-- Added graceful shutdown on SIGTERM/SIGINT signals
-- Replaced `console.log` with winston logger
 
-### `server/utils/logger.js` (new)
-- Created winston logger with JSON format
-- Added file transports for error.log and combined.log
-- Console logging for development
-
-### `server/package.json`
-- Added: helmet, express-rate-limit, morgan, winston, compression
-- Added `start` script for production
