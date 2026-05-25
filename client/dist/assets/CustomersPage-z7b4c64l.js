@@ -1,0 +1,1 @@
+import{n as e}from"./components-DkPVfW4X.js";import{o as t}from"./index-CDKHzf8U.js";var n=t();function r(){return(0,n.jsx)(`div`,{className:`db-page scrollbar`,children:(0,n.jsx)(e,{})})}export{r as default};

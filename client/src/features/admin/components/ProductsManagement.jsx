@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Eye, X, Package, Archive, Plus, Edit, Trash2, Save } from "lucide-react";
+import { Search, X, Package, Plus, Edit, Trash2, Save } from "lucide-react";
 import { formatPeso } from "../../../utils/dashboardUtils";
 
 const PRODUCTS = [
@@ -133,81 +133,44 @@ const initialProductState = {
   }
 };
 
-function ProductRow({ product, onViewProduct, onEditProduct, onDeleteProduct }) {
-  const statusColors = {
-    active: "bg-success/20 text-success",
-    archived: "bg-muted-foreground/20 text-muted-foreground"
-  };
-
+function ProductCard({ product, onClick }) {
   const stockStatus = product.stock === 0 ? "bg-destructive/20 text-destructive" :
                       product.stock < 10 ? "bg-destructive/20 text-destructive" :
                       "bg-success/20 text-success";
 
   return (
-    <tr className="pm-tr">
-      <td className="pm-td pm-td--mono">{product.id}</td>
-      <td className="pm-td pm-td--name">
-        <div className="pm-product-info">
-          <div className="pm-product-img">
-            <img src={product.images[0]} alt={product.name} />
-          </div>
-          <div>
-            <p className="font-medium">{product.name}</p>
-            <p className="text-xs text-muted-foreground">{product.category}</p>
-          </div>
+    <div className="pm-card" onClick={() => onClick?.(product)} style={{ cursor: "pointer" }}>
+      <div className="pm-card__img">
+        <img src={product.images[0]} alt={product.name} />
+      </div>
+      <div className="pm-card__content">
+        <h3 className="pm-card__title">{product.name}</h3>
+        <p className="pm-card__category">{product.category}</p>
+        
+        <div className="pm-card__pricing">
+          <span className="pm-card__price">{formatPeso(product.price)}</span>
+          {product.promoPrice && (
+            <span className="pm-card__promo">{formatPeso(product.promoPrice)}</span>
+          )}
         </div>
-      </td>
-      <td className="pm-td pm-td--r pm-td--bold">{formatPeso(product.price)}</td>
-      <td className="pm-td pm-td--r">
-        <span className={`pm-badge ${stockStatus}`}>
-          {product.stock} in stock
-        </span>
-      </td>
-      <td className="pm-td">
-        <span className="pm-featured-tag">
-          {product.featured && "Featured"}
-          {product.seasonal && "Seasonal"}
-          {!product.featured && !product.seasonal && "-"}
-        </span>
-      </td>
-      <td className="pm-td">
-        <span className={`pm-badge ${statusColors[product.status]}`}>
+        
+        <div className="pm-card__meta">
+          <span className={`pm-badge ${stockStatus}`}>
+            {product.stock} in stock
+          </span>
+          {product.featured && <span className="pm-badge pm-badge--featured">Featured</span>}
+          {product.seasonal && <span className="pm-badge pm-badge--seasonal">Seasonal</span>}
+        </div>
+        
+        <span className={`pm-status pm-status--${product.status}`}>
           {product.status.toUpperCase()}
         </span>
-      </td>
-      <td className="pm-td">
-        <div className="pm-actions">
-          <button
-            className="db-ghost-btn flex items-center gap-1"
-            type="button"
-            onClick={() => onViewProduct?.(product)}
-          >
-            <Eye size={12} />
-            View
-          </button>
-          <button
-            className="db-ghost-btn flex items-center gap-1"
-            type="button"
-            onClick={() => onEditProduct?.(product)}
-          >
-            <Edit size={12} />
-            Edit
-          </button>
-          <button
-            className="db-ghost-btn flex items-center gap-1 text-destructive"
-            type="button"
-            onClick={() => onDeleteProduct?.(product)}
-          >
-            <Trash2 size={12} />
-            Delete
-          </button>
-        </div>
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }
 
-function ProductModal({ product, onClose }) {
+function ProductModal({ product, onClose, onEdit, onDelete }) {
   if (!product) return null;
 
   return (
@@ -222,109 +185,43 @@ function ProductModal({ product, onClose }) {
         </div>
 
         <div className="cd-modal__body scrollbar">
-          <div className="cd-profile">
-            <div className="pm-modal__avatar">
-              <img src={product.images[0]} alt={product.name} />
-            </div>
-            <div className="cd-profile__info">
-              <h3 className="cd-profile__name">{product.name}</h3>
-              <p className="cd-profile__email">{product.category}</p>
-            </div>
-          </div>
-
           <div className="cd-section">
-            <h4 className="cd-section__title">Pricing</h4>
-            <div className="pm-pricing-grid">
-              <div className="pm-price-item">
-                <p className="pm-price-label">Standard</p>
-                <p className="pm-price-value">{formatPeso(product.price)}</p>
-              </div>
-              <div className="pm-price-item">
-                <p className="pm-price-label">Deluxe</p>
-                <p className="pm-price-value">{formatPeso(product.deluxePrice)}</p>
-              </div>
-              <div className="pm-price-item">
-                <p className="pm-price-label">Premium</p>
-                <p className="pm-price-value">{formatPeso(product.premiumPrice)}</p>
-              </div>
-              {product.promoPrice && (
-                <div className="pm-price-item">
-                  <p className="pm-price-label">Promotional</p>
-                  <p className="pm-price-value text-primary">{formatPeso(product.promoPrice)}</p>
-                </div>
+            <div className="pm-modal__avatar">
+              {product.images && product.images[0] ? (
+                <img src={product.images[0]} alt={product.name} />
+              ) : (
+                <div className="pm-modal__skeleton" />
               )}
             </div>
           </div>
 
           <div className="cd-section">
-            <h4 className="cd-section__title">Inventory & Status</h4>
+            <h4 className="cd-section__title">Product Information</h4>
             <div className="cd-info-grid">
               <div className="cd-info-item">
-                <Package size={14} />
-                <span>Stock: {product.stock}</span>
+                <p className="pm-card__id">{product.id}</p>
               </div>
               <div className="cd-info-item">
-                <Archive size={14} />
-                <span>Status: {product.status}</span>
+                <span>{product.category}</span>
+              </div>
+              <div className="cd-info-item cd-info-item--full">
+                <span>Price: {formatPeso(product.price)}</span>
+              </div>
+              <div className="cd-info-item">
+                <span>Stock: {product.stock}</span>
               </div>
             </div>
           </div>
-
-          <div className="cd-section">
-            <h4 className="cd-section__title">Variants</h4>
-            <div className="pm-variants">
-              <div className="pm-variant-group">
-                <p className="pm-variant-label">Colors</p>
-                <div className="pm-tags">
-                  {product.variants.colors.map((c, i) => (
-                    <span key={i} className="pm-tag">{c}</span>
-                  ))}
-                </div>
-              </div>
-              <div className="pm-variant-group">
-                <p className="pm-variant-label">Wrappers</p>
-                <div className="pm-tags">
-                  {product.variants.wrappers.map((w, i) => (
-                    <span key={i} className="pm-tag">{w}</span>
-                  ))}
-                </div>
-              </div>
-              <div className="pm-variant-group">
-                <p className="pm-variant-label">Ribbons</p>
-                <div className="pm-tags">
-                  {product.variants.ribbons.map((r, i) => (
-                    <span key={i} className="pm-tag">{r}</span>
-                  ))}
-                </div>
-              </div>
-              <div className="pm-variant-group">
-                <p className="pm-variant-label">Sizes</p>
-                <div className="pm-tags">
-                  {product.variants.sizes.map((s, i) => (
-                    <span key={i} className="pm-tag">{s}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {product.images.length > 1 && (
-            <div className="cd-section">
-              <h4 className="cd-section__title">Gallery</h4>
-              <div className="pm-gallery">
-                {product.images.map((img, i) => (
-                  <div key={i} className="pm-gallery-img">
-                    <img src={img} alt={`${product.name} ${i + 1}`} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="cd-modal__footer">
-          <button className="db-outline-btn" type="button" onClick={onClose}>
-            Close
+          <button type="button" className="db-outline-btn" onClick={() => onEdit?.(product)}>
+            <Edit size={14} />
+            Edit
+          </button>
+          <button type="button" className="db-outline-btn text-destructive" onClick={() => onDelete?.(product)}>
+            <Trash2 size={14} />
+            Delete
           </button>
         </div>
       </div>
@@ -671,10 +568,10 @@ export function ProductsManagement({ products = PRODUCTS }) {
   };
 
   return (
-    <div className="pm-card">
-      <div className="cm-card__head">
+    <div className="pm-page scrollbar">
+      <div className="pm-page__head">
         <div>
-          <p className="cm-card__title">Products Management</p>
+          <p className="cm-card__title">Products</p>
           <p className="cm-card__subtitle">{products.length} total products</p>
         </div>
         <div className="cm-card__actions">
@@ -714,41 +611,36 @@ export function ProductsManagement({ products = PRODUCTS }) {
         </div>
       </div>
 
-      <div className="cm-table-wrap">
-        <table className="cm-table">
-          <thead>
-            <tr>
-              <th className="cm-th">Product ID</th>
-              <th className="cm-th">Name & Category</th>
-              <th className="cm-th cm-th--r">Price</th>
-              <th className="cm-th">Stock</th>
-              <th className="cm-th">Tags</th>
-              <th className="cm-th">Status</th>
-              <th className="cm-th">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProducts.map((product) => (
-              <ProductRow
-                key={product.id}
-                product={product}
-                onViewProduct={handleViewProduct}
-                onEditProduct={handleEditProduct}
-                onDeleteProduct={handleDeleteProduct}
-              />
-            ))}
-          </tbody>
-        </table>
+      <div className="pm-grid">
+        {filteredProducts.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onClick={handleViewProduct}
+          />
+        ))}
       </div>
 
-      <div className="cm-card__foot">
+      {filteredProducts.length === 0 && (
+        <div className="pm-empty">
+          <Package size={48} className="pm-empty__icon" />
+          <p className="pm-empty__text">No products found</p>
+        </div>
+      )}
+
+      <div className="pm-page__foot">
         <p className="cm-card__foot-text">
           Showing {filteredProducts.length} of {products.length} products
         </p>
       </div>
 
       {selectedProduct && (
-        <ProductModal product={selectedProduct} onClose={handleCloseModal} />
+        <ProductModal
+          product={selectedProduct}
+          onClose={handleCloseModal}
+          onEdit={handleEditProduct}
+          onDelete={handleDeleteProduct}
+        />
       )}
 
       {showAddModal && (
