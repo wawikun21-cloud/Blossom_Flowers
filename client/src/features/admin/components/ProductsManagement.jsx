@@ -133,38 +133,126 @@ const initialProductState = {
   }
 };
 
-function ProductCard({ product, onClick }) {
-  const stockStatus = product.stock === 0 ? "bg-destructive/20 text-destructive" :
-                      product.stock < 10 ? "bg-destructive/20 text-destructive" :
-                      "bg-success/20 text-success";
+function ProductCard({ product, onClick, onEdit, onDelete }) {
+  const isLowStock = product.stock > 0 && product.stock < 10;
+  const isOutOfStock = product.stock === 0;
+  const stockPct = Math.min(100, Math.round((product.stock / 50) * 100));
+
+  const stockBarClass = isOutOfStock || isLowStock
+    ? "pm-card__stock-fill pm-card__stock-fill--low"
+    : product.stock < 25
+    ? "pm-card__stock-fill pm-card__stock-fill--mid"
+    : "pm-card__stock-fill pm-card__stock-fill--ok";
+
+  const discountPct = product.promoPrice
+    ? Math.round(((product.price - product.promoPrice) / product.price) * 100)
+    : null;
+
+  const allVariants = [
+    ...(product.variants?.colors ?? []),
+    ...(product.variants?.sizes ?? []),
+  ];
+  const visibleVariants = allVariants.slice(0, 3);
+  const extraCount = allVariants.length - visibleVariants.length;
 
   return (
-    <div className="pm-card" onClick={() => onClick?.(product)} style={{ cursor: "pointer" }}>
+    <div className="pm-card" onClick={() => onClick?.(product)}>
+      {/* Image */}
       <div className="pm-card__img">
-        <img src={product.images[0]} alt={product.name} />
+        {product.images[0]
+          ? <img src={product.images[0]} alt={product.name} />
+          : <div className="pm-card__img-placeholder" />
+        }
+
+        {/* Status pill — top left */}
+        <span className={`pm-card__status-overlay pm-card__status-overlay--${product.status}`}>
+          <span className="pm-card__status-dot" />
+          {product.status === "active" ? "Active" : "Archived"}
+        </span>
+
+        {/* Hover quick-actions — top right */}
+        <div className="pm-card__quick-actions">
+          <button
+            className="pm-card__qa-btn"
+            aria-label="Edit product"
+            onClick={(e) => { e.stopPropagation(); onEdit?.(product); }}
+          >
+            <Edit size={13} />
+          </button>
+          <button
+            className="pm-card__qa-btn"
+            aria-label="View product"
+            onClick={(e) => { e.stopPropagation(); onClick?.(product); }}
+          >
+            <Search size={13} />
+          </button>
+        </div>
+
+        {/* Flags — bottom left */}
+        <div className="pm-card__img-flags">
+          {product.featured && <span className="pm-badge pm-badge--featured">★ Featured</span>}
+          {product.seasonal && <span className="pm-badge pm-badge--seasonal">❀ Seasonal</span>}
+          {isLowStock && <span className="pm-badge pm-badge--low-stock">⚠ Low Stock</span>}
+          {isOutOfStock && <span className="pm-badge pm-badge--out-of-stock">✕ Out of Stock</span>}
+        </div>
       </div>
+
+      {/* Body */}
       <div className="pm-card__content">
         <h3 className="pm-card__title">{product.name}</h3>
         <p className="pm-card__category">{product.category}</p>
-        
+
+        {/* Pricing */}
         <div className="pm-card__pricing">
           <span className="pm-card__price">{formatPeso(product.price)}</span>
           {product.promoPrice && (
-            <span className="pm-card__promo">{formatPeso(product.promoPrice)}</span>
+            <>
+              <span className="pm-card__promo">{formatPeso(product.promoPrice)}</span>
+              <span className="pm-card__discount">-{discountPct}%</span>
+            </>
           )}
         </div>
-        
-        <div className="pm-card__meta">
-          <span className={`pm-badge ${stockStatus}`}>
-            {product.stock} in stock
-          </span>
-          {product.featured && <span className="pm-badge pm-badge--featured">Featured</span>}
-          {product.seasonal && <span className="pm-badge pm-badge--seasonal">Seasonal</span>}
+
+        {/* Stock bar */}
+        <div className="pm-card__stock">
+          <div className="pm-card__stock-label">
+            <span className={isLowStock || isOutOfStock ? "pm-card__stock-warn" : ""}>
+              {isOutOfStock ? "Out of stock" : isLowStock ? `Only ${product.stock} left!` : "Stock"}
+            </span>
+            <span className="pm-card__stock-count">{product.stock} units</span>
+          </div>
+          <div className="pm-card__stock-bg">
+            <div className={stockBarClass} style={{ width: `${stockPct}%` }} />
+          </div>
         </div>
-        
-        <span className={`pm-status pm-status--${product.status}`}>
-          {product.status.toUpperCase()}
-        </span>
+
+        {/* Variant chips */}
+        {visibleVariants.length > 0 && (
+          <div className="pm-card__chips">
+            {visibleVariants.map((v, i) => (
+              <span key={i} className="pm-chip">{v}</span>
+            ))}
+            {extraCount > 0 && <span className="pm-chip pm-chip--more">+{extraCount}</span>}
+          </div>
+        )}
+      </div>
+
+      {/* Footer actions */}
+      <div className="pm-card__footer">
+        <button
+          className="pm-card__edit-btn"
+          onClick={(e) => { e.stopPropagation(); onEdit?.(product); }}
+        >
+          <Edit size={12} />
+          Edit product
+        </button>
+        <button
+          className="pm-card__delete-btn"
+          aria-label="Delete product"
+          onClick={(e) => { e.stopPropagation(); onDelete?.(product); }}
+        >
+          <Trash2 size={13} />
+        </button>
       </div>
     </div>
   );
@@ -617,6 +705,8 @@ export function ProductsManagement({ products = PRODUCTS }) {
             key={product.id}
             product={product}
             onClick={handleViewProduct}
+            onEdit={handleEditProduct}
+            onDelete={handleDeleteProduct}
           />
         ))}
       </div>
